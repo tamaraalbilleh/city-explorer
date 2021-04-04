@@ -9,6 +9,13 @@ server.listen(PORT,()=>{
 const cors = require('cors'); // to import cors //
 server.use (cors()); // to make the server use cors methods //
 
+server.get ('*',(req,res)=>{
+  let errorObject = {
+    status: 500,
+    responseText : 'Sorry, something went wrong , ...'
+  };
+  res.status(500).send (errorObject);
+});
 
 server.get ('/',(req,res)=>{ // to make a request/response when user is  on '/' //
   res.send('server is alive !');
@@ -75,10 +82,10 @@ function Weather (weatherData) {
 //     ...
 //   }
 
-server.get ('*',(req,res)=>{
-  let errorObject = {
-    status: 500,
-    responseText : 'Sorry, something went wrong , ...'
-  };
-  res.status(500).send (errorObject);
-});
+// server.get ('*',(req,res)=>{
+//   let errorObject = {
+//     status: 500,
+//     responseText : 'Sorry, something went wrong , ...'
+//   };
+//   res.status(500).send (errorObject);
+// });
