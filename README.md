@@ -23,30 +23,30 @@ this application gives you the exact location of a city you search for and the w
 
 * Estimate of time needed to complete: 2 hours
 
-Start time: 3:05 pm
+* Start time: 3:05 pm
 
-Finish time: _____
+* Finish time: 5:00 pm
 
-Actual time needed to complete: _____
+* Actual time needed to complete: 2 hours 
 *** 
 ### Number and name of feature:3. Weather
 
 * Estimate of time needed to complete: 2 hours
 
-Start time: _____
+* Start time: 5:00 pm 
 
-Finish time: _____
+* Finish time: 6:19 pm
 
-Actual time needed to complete: _____
+* Actual time needed to complete: 1:19 hours 
 *** 
 ### Number and name of feature: 4. Errors:
 * Estimate of time needed to complete: 3 hours
 
-Start time: _____
+* Start time: 6:19 pm
 
-Finish time: _____
+* Finish time: 6:25 pm
 
-Actual time needed to complete: _____
+* Actual time needed to complete: 6 minutes 
 *** 
 ## Getting Started
 you can use this app from th URL 
