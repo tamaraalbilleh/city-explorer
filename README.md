@@ -50,7 +50,7 @@ this application gives you the exact location of a city you search for and the w
 *** 
 ## Getting Started
 you can use this app from th URL 
-just [click Here]().
+just [click Here](https://city-expl0rer.herokuapp.com/).
 * once you are in the url , type the name of the city you want to search for it's location or weather .
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
 
