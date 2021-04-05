@@ -66,6 +66,8 @@ function weatherHandler (req,res){
       return new Weather (item);
     });
     res.send (weatherArray);
+
+
   });
 }
 
@@ -108,7 +110,7 @@ function Location (geoData) {
 // weather
 function Weather (weatherData) {
 
-  this.forcast = weatherData.weather.description;
+  this.forecast = weatherData.weather.description;
   this.time = new Date( weatherData.datetime).toString().slice(0, 15);
 }
 
@@ -132,3 +134,5 @@ function errorHandler (req,res){
   res.status(500).send (errorObject);
 }
 server.get ('*',errorHandler);
+
+
