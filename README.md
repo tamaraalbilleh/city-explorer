@@ -48,6 +48,46 @@ this application gives you the exact location of a city you search for and the w
 
 * Actual time needed to complete: 6 minutes 
 *** 
+## estimate time lab 07
+###  Number and name of feature: 1. Data formatting
+
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 2:20 pm 
+
+* Finish time: 2:35 pm
+
+* Actual time needed to complete: 15 minutes
+***
+### Number and name of feature:2. Locations
+
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 2:50 pm 
+
+* Finish time: 4:00 pm 
+
+* Actual time needed to complete: 1:10 hours 
+*** 
+### Number and name of feature:3. Weather
+
+* Estimate of time needed to complete: 2 hours
+
+* Start time: 4:00 pm
+
+* Finish time: 5:12 pm
+
+* Actual time needed to complete:  1:12 hours
+*** 
+### Number and name of feature: 4. Parks
+* Estimate of time needed to complete: 
+
+* Start time:
+
+* Finish time:
+
+* Actual time needed to complete:
+*** 
 ## Getting Started
 you can use this app from th URL 
 just [click Here](https://city-expl0rer.herokuapp.com/).
@@ -61,7 +101,9 @@ just [click Here](https://city-expl0rer.herokuapp.com/).
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
 ## Change Log
-04-04-2021 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource and the weather resource.
+ * 04-04-2021 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource and the weather resource.
+
+ * 05-04-2021 2:23pm - Application now has a fully-functional express server, with a GET route for the location resource ,the weather resource and national parks resources from APIs : locationIQ , Weather and national parks perspectively  .
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.
