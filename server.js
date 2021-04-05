@@ -57,23 +57,15 @@ function locationHandler (req,res){
 function weatherHandler (req,res){
   // let weatherData = require ('./data/weather.json');
   let city = req.query.search_query;
-  let weatherArray = [];
   let key = process.env.WEATHER_API_KEY;
   let weatherURL = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${key}`;
   superagent.get (weatherURL).then (weatherData=>{
     let data = weatherData.body;
-
-    let data2 = Object.entries (data);
-    // let data3 =Object.entries (data2);
-    // console.log (data3);
-    // res.send (data2);
-    data2[0][1].map (item=>{
-      let newWeather = new Weather (item);
-      weatherArray.push (newWeather);
+    let data2 = data.data;
+    let weatherArray = data2.map (item=>{
+      return new Weather (item);
     });
     res.send (weatherArray);
-
-
   });
 }
 
