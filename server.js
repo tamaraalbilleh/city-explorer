@@ -3,28 +3,34 @@
 // DOTENV //
 require('dotenv').config();
 
+
 // Dependencies //
 const express = require('express');
 const cors = require('cors');
 const superagent = require ('superagent');
+
+
 // setup //
 const server = express();
 const PORT = process.env.PORT || 5000;
 server.use (cors());
+
 
 // server is listening //
 server.listen(PORT,()=>{
   console.log (`listening on PORT ${PORT}`);
 });
 
+
 // routs //
 server.get ('/',homeRoutHandler);
 server.get ('/location',locationHandler);
 server.get ('/weather',weatherHandler);
 server.get ('/parks',parksHandler);
-server.get ('*',errorHandler);
+
 
 // rout handlers //
+
 // home
 function homeRoutHandler (req,res){
   res.send('server is alive !');
@@ -44,6 +50,7 @@ function locationHandler (req,res){
   });
 
 }
+
 
 // weather
 // https://city-expl0rer.herokuapp.com/weather?search_query=Lynnwood&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932&page=1
@@ -69,22 +76,31 @@ function weatherHandler (req,res){
 
   });
 }
+
+
+
 // parks
+// Request URL: https://city-expl0rer.herokuapp.com/parks?search_query=Lynnwood&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932&page=1
+function parksHandler (req , res){
+  // let city1 = req.query;
+  let city = req.query.search_query;
+  let key = process.env.PARKS_API_KEY;
+  // console.log (city1);
+  let parksURL = `https://developer.nps.gov/api/v1/parks?q=${city}&api_key=${key}`;
+  // let parksArray = [];
+  // console.log (parksURL);
+  superagent.get(parksURL).then(parkData => {
+    let pData = parkData.body;
+    let targetData = pData.data;
+    let responseArray = targetData.map (item=>{
+      return new Parks (item);
+    });
+    // let data1 =pData.data.map (item => new Parks (item));
+    res.send (responseArray);
+  });
 
-
-
-
-
-
-
-// error
-function errorHandler (req,res){
-  let errorObject = {
-    status: 500,
-    responseText : 'Sorry, something went wrong , ...'
-  };
-  res.status(500).send (errorObject);
 }
+
 
 // constructors //
 // location
@@ -95,56 +111,32 @@ function Location (geoData) {
   this.latitude =geoData[0].lat;
   this.longitude = geoData[0].lon;
 }
+
+
 // weather
 function Weather (weatherData) {
 
   this.forcast = weatherData.weather.description;
   this.time = new Date( weatherData.datetime).toString().slice(0, 15);
 }
+
+
 // parks
-
-
-
-// [
-//   {
-//    "name": "Klondike Gold Rush - Seattle Unit National Historical Park",
-//    "address": "319 Second Ave S., Seattle, WA 98104",
-//    "fee": "0.00",
-//    "description": "Seattle flourished during and after the Klondike Gold Rush. Merchants supplied people from around the world passing through this port city on their way to a remarkable adventure in Alaska. Today, the park is your gateway to learn about the Klondike Gold Rush, explore the area's public lands, and engage with the local community.",
-//    "url": "https://www.nps.gov/klse/index.htm"
-//   },
-//   {
-//    "name": "Mount Rainier National Park",
-//    "address": "55210 238th Avenue East, Ashford, WA 98304",
-//    "fee": "0.00",
-//    "description": "Ascending to 14,410 feet above sea level, Mount Rainier stands as an icon in the Washington landscape. An active volcano, Mount Rainier is the most glaciated peak in the contiguous U.S.A., spawning five major rivers. Subalpine wildflower meadows ring the icy volcano while ancient forest cloaks Mount Rainier’s lower slopes. Wildlife abounds in the park’s ecosystems. A lifetime of discovery awaits.",
-//    "url": "https://www.nps.gov/mora/index.htm"
-//   },
-//   ...
-// ]
-
-// Request URL: https://city-expl0rer.herokuapp.com/parks?search_query=Lynnwood&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932&page=1
-function parksHandler (req , res){
-  // let city1 = req.query;
-  let city = req.query.search_query;
-  let key = process.env.PARKS_API_KEY;
-  // console.log (city1);
-  let parksURL = `https://developer.nps.gov/api/v1/parks?q=${city}&api_key=${key}`;
-  
-  // console.log (parksURL);
-  superagent.get('https://developer.nps.gov/api/v1/parks?q=seattle&api_key=luIcYs1ZANUUlrT19lI5l4cfuhO1dtXyUhgQaLo2&format=json').then(parkData => {
-    console.log (parkData);
-    // let gData = geoData.body;
-    // let newLocation = new Location(gData);
-    res.send (parkData);
-  });
-  
+function Parks (parksData){
+  this.name = parksData.fullName;
+  this.address =`${parksData.addresses[0].line1}, ${parksData.addresses[1].line1} `;
+  this.fee =parksData.entranceFees[0].cost ;
+  this.description =parksData.description ;
+  this.url =parksData.url ;
 }
 
-// function Parks (parksData){
-//   this.name = ;
-//   this.address = ;
-//   this.fee = ;
-//   this.description = ;
-//   this.url = ;
-// }
+
+// error
+function errorHandler (req,res){
+  let errorObject = {
+    status: 500,
+    responseText : 'Sorry, something went wrong , ...'
+  };
+  res.status(500).send (errorObject);
+}
+server.get ('*',errorHandler);
