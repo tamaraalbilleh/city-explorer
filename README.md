@@ -88,6 +88,39 @@ this application gives you the exact location of a city you search for and the w
 
 * Actual time needed to complete:
 *** 
+## estimate time lab 08
+###  Number and name of feature:1. Database:
+
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 4:00 pm 
+
+* Finish time: 4:50 pm
+
+* Actual time needed to complete: 50 minutes
+***
+### Number and name of feature:2. Server
+
+* Estimate of time needed to complete: 3 hour
+
+* Start time: 4:50 pm 
+
+* Finish time: 10:00 pm 
+
+* Actual time needed to complete: 5:10 hours 
+*** 
+### Number and name of feature:3. Deploy:
+
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 12:00 am
+
+* Finish time: 1:00 am
+
+* Actual time needed to complete:  1 hour
+*** 
+
+
 ## Getting Started
 you can use this app from th URL 
 just [click Here](https://city-expl0rer.herokuapp.com/).
@@ -104,6 +137,8 @@ just [click Here](https://city-expl0rer.herokuapp.com/).
  * 04-04-2021 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource and the weather resource.
 
  * 05-04-2021 2:23pm - Application now has a fully-functional express server, with a GET route for the location resource ,the weather resource and national parks resources from APIs : locationIQ , Weather and national parks perspectively  .
+
+ * 06-04-2021 4:59pm - Application now has a fully-functional postgress server, with a GET route for the location resource ,the weather resource and national parks resources from APIs : locationIQ , Weather and national parks perspectively  .
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.

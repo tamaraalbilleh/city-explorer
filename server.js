@@ -14,7 +14,12 @@ const pg = require('pg');
 const server = express();
 const PORT = process.env.PORT || 5000;
 server.use (cors());
-const client = new pg.Client(process.env.DATABASE_URL);
+const client = new pg.Client( {
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized : false
+  }
+});
 
 // server is listening //
 client.connect().then (()=>{
@@ -94,9 +99,14 @@ function locationHandler (req,res){
     else { // if it does already exist this will happen //
       console.log ('yeah it does');
       let SQL = `SELECT * FROM locations WHERE search_query = $1`;
-      let safeValues = cityName.charAt(0).toUpperCase() + cityName.slice(1); // to capitalize the first letter //
-      console.log(safeValues);
-      client.query (SQL,[safeValues]).then(result=>{
+      // let safeValues = cityName.charAt(0).toUpperCase() + cityName.slice(1); // to capitalize the first letter //
+      let safeValuesArray = newArr;
+      let safeValues = safeValuesArray.filter(item=>{
+        return item.toLocaleLowerCase().includes(cityName.toLocaleLowerCase());
+      });
+
+      console.log('safe',[safeValues[0]]);
+      client.query (SQL,[safeValues[0]]).then(result=>{
         console.log ('q result rows',result.rows);
         res.send (result.rows[0]);
       });
