@@ -8,18 +8,21 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const superagent = require ('superagent');
-
+const pg = require('pg');
 
 // setup //
 const server = express();
 const PORT = process.env.PORT || 5000;
 server.use (cors());
-
+const client = new pg.Client(process.env.DATABASE_URL);
 
 // server is listening //
-server.listen(PORT,()=>{
-  console.log (`listening on PORT ${PORT}`);
+client.connect().then (()=>{
+  server.listen(PORT,()=>{
+    console.log (`listening on PORT ${PORT}`);
+  });
 });
+
 
 
 // routs //
@@ -37,19 +40,100 @@ function homeRoutHandler (req,res){
 }
 // location
 // https://city-expl0rer.herokuapp.com/location?city=amman // request url
+// function locationHandler (req,res){
+//   let cityName = req.query.city;
+//   // console.log (req.query);
+//   // let geoData = require ('./data/location.json');
+//   let key = process.env.GEOCODE_API_KEY;
+//   let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
+//   superagent.get(locationURL).then(geoData => {
+//     let gData = geoData.body;
+//     let newLocation = new Location(gData);
+//     res.send (newLocation);
+//   });
+
+// }
+
+
+// test
+// https://city-expl0rer.herokuapp.com/location?city=amman // request url
 function locationHandler (req,res){
   let cityName = req.query.city;
-  // console.log (req.query);
-  // let geoData = require ('./data/location.json');
-  let key = process.env.GEOCODE_API_KEY;
-  let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
-  superagent.get(locationURL).then(geoData => {
-    let gData = geoData.body;
-    let newLocation = new Location(gData);
-    res.send (newLocation);
-  });
+  let searchValue = req.query.city;
+  // let searchCommand = `SELECT * FROM locations WHERE search_query = $1`;Searchstring
+  // let searchCommand = `SELECT * FROM locations WHERE search_query CONTAINS $1`;
+  let searchCommand = `SELECT search_query FROM locations `;
+  client.query(searchCommand).then (result=>{
+    // client.query(`SELECT * FROM locations WHERE search_query`).then (result=>{
+    // let newLocation = new Location(result);
+    console.log ('this is results',result.rows);
+    let arr = result.rows;
+    let newArr = [];
+    for (let i=0;i<arr.length;i++){
+      newArr.push (arr[i].search_query);
+    }
+    let obj = { search_query: `${cityName}` };
+    console.log ('this is the value array',newArr);
+    console.log ('city name',cityName);
+    function check (arr){
+      for (let i =0;i<arr.length;i++){
+        if(arr[i].toLowerCase() === cityName.toLowerCase()){
+          return true;
+        }
+      }
+    }
+    if (!check (newArr)){
+      console.log ('no it doesnt');
+      let key = process.env.GEOCODE_API_KEY;
+      let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
+      superagent.get(locationURL).then(geoData => {
+        let SQL = `INSERT INTO locations(search_query,formatted_query,latitude,longitude)VALUES($1,$2,$3,$4) RETURNING *;`;
+        let gData = geoData.body;
+        let newLocation = new Location(gData);
+        let safeValues = [newLocation.search_query,newLocation.formatted_query,newLocation.latitude,newLocation.longitude];
+        client.query (SQL,safeValues).then(result=>{
+          console.log ('new',result.rows);
+          res.send (newLocation);
+        });
+      });
+    }
+    else { console.log ('yeah it does');
+    let SQL = `INSERT INTO locations(search_query,formatted_query,latitude,longitude)VALUES($1,$2,$3,$4) RETURNING *;`;
+    let safeValues = [newLocation.search_query,newLocation.formatted_query,newLocation.latitude,newLocation.longitude];
 
+    // client.query (SQL,safeValues).then(result=>{
+    //   console.log ('new',result.rows);
+    //   res.send (newLocation);
+    // });
+    }
+
+
+
+
+    //   console.log ('old',result.rows);
+    //
+    // }
+
+  });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // weather
