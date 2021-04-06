@@ -38,6 +38,8 @@ server.get ('/parks',parksHandler);
 function homeRoutHandler (req,res){
   res.send('server is alive !');
 }
+
+// lab 07 //
 // location
 // https://city-expl0rer.herokuapp.com/location?city=amman // request url
 // function locationHandler (req,res){
@@ -55,34 +57,27 @@ function homeRoutHandler (req,res){
 // }
 
 
-// test
+// lab 08 //
+// locations
 // https://city-expl0rer.herokuapp.com/location?city=amman // request url
 function locationHandler (req,res){
   let cityName = req.query.city;
-  let searchValue = req.query.city;
-  // let searchCommand = `SELECT * FROM locations WHERE search_query = $1`;Searchstring
-  // let searchCommand = `SELECT * FROM locations WHERE search_query CONTAINS $1`;
-  let searchCommand = `SELECT search_query FROM locations `;
+  let searchCommand = `SELECT search_query FROM locations `; // to search generally in all search_query values that exists //
   client.query(searchCommand).then (result=>{
-    // client.query(`SELECT * FROM locations WHERE search_query`).then (result=>{
-    // let newLocation = new Location(result);
     console.log ('this is results',result.rows);
-    let arr = result.rows;
-    let newArr = [];
+    let arr = result.rows; // stored the rows in an array //
+    let newArr = []; // created a new array //
     for (let i=0;i<arr.length;i++){
-      newArr.push (arr[i].search_query);
+      newArr.push (arr[i].search_query); // pushed only the property search_query in to it to get rid of the object //
     }
-    let obj = { search_query: `${cityName}` };
-    console.log ('this is the value array',newArr);
-    console.log ('city name',cityName);
-    function check (arr){
+    function check (arr){ // created a function to check if the city name the user enters already exist in the array //
       for (let i =0;i<arr.length;i++){
-        if(arr[i].toLowerCase() === cityName.toLowerCase()){
+        if(arr[i].toLocaleLowerCase().includes(cityName.toLocaleLowerCase())){ // it it does exist this will return true //
           return true;
         }
       }
     }
-    if (!check (newArr)){
+    if (!check (newArr)){ // if it didnt exist this will happen //
       console.log ('no it doesnt');
       let key = process.env.GEOCODE_API_KEY;
       let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
@@ -92,49 +87,23 @@ function locationHandler (req,res){
         let newLocation = new Location(gData);
         let safeValues = [newLocation.search_query,newLocation.formatted_query,newLocation.latitude,newLocation.longitude];
         client.query (SQL,safeValues).then(result=>{
-          console.log ('new',result.rows);
           res.send (newLocation);
         });
       });
     }
-    else { console.log ('yeah it does');
-    let SQL = `INSERT INTO locations(search_query,formatted_query,latitude,longitude)VALUES($1,$2,$3,$4) RETURNING *;`;
-    let safeValues = [newLocation.search_query,newLocation.formatted_query,newLocation.latitude,newLocation.longitude];
-
-    // client.query (SQL,safeValues).then(result=>{
-    //   console.log ('new',result.rows);
-    //   res.send (newLocation);
-    // });
+    else { // if it does already exist this will happen //
+      console.log ('yeah it does');
+      let SQL = `SELECT * FROM locations WHERE search_query = $1`;
+      let safeValues = cityName.charAt(0).toUpperCase() + cityName.slice(1); // to capitalize the first letter //
+      console.log(safeValues);
+      client.query (SQL,[safeValues]).then(result=>{
+        console.log ('q result rows',result.rows);
+        res.send (result.rows[0]);
+      });
     }
-
-
-
-
-    //   console.log ('old',result.rows);
-    //
-    // }
 
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // weather
 // https://city-expl0rer.herokuapp.com/weather?search_query=Lynnwood&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932&page=1
