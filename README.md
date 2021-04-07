@@ -124,31 +124,31 @@ this application gives you the exact location of a city you search for and the w
 
 * Estimate of time needed to complete: 1 hour
 
-* Start time: 4:00 pm 
+* Start time: 1:00 pm 
 
-* Finish time: 4:50 pm
+* Finish time: 2:00 pm
 
-* Actual time needed to complete: 50 minutes
+* Actual time needed to complete: 1 hour 
 ***
 ### Number and name of feature:2. Yelp: 
 
-* Estimate of time needed to complete: 3 hour
+* Estimate of time needed to complete: 2 hours
 
-* Start time: 4:50 pm 
+* Start time: 2:00 pm 
 
-* Finish time: 10:00 pm 
+* Finish time: 4:00 pm 
 
-* Actual time needed to complete: 5:10 hours 
+* Actual time needed to complete: 2 hours
 *** 
 ### Number and name of feature:3. Pagination
 
 * Estimate of time needed to complete: 1 hour
 
-* Start time: 12:00 am
+* Start time: 4:30 pm
 
-* Finish time: 1:00 am
+* Finish time: 5:00 pm
 
-* Actual time needed to complete:  1 hour
+* Actual time needed to complete:  1/2 hour
 *** 
 
 ## Getting Started
