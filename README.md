@@ -119,7 +119,37 @@ this application gives you the exact location of a city you search for and the w
 
 * Actual time needed to complete:  1 hour
 *** 
+## estimate time lab 09
+###  Number and name of feature:1. Movies:
 
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 4:00 pm 
+
+* Finish time: 4:50 pm
+
+* Actual time needed to complete: 50 minutes
+***
+### Number and name of feature:2. Yelp: 
+
+* Estimate of time needed to complete: 3 hour
+
+* Start time: 4:50 pm 
+
+* Finish time: 10:00 pm 
+
+* Actual time needed to complete: 5:10 hours 
+*** 
+### Number and name of feature:3. Pagination
+
+* Estimate of time needed to complete: 1 hour
+
+* Start time: 12:00 am
+
+* Finish time: 1:00 am
+
+* Actual time needed to complete:  1 hour
+*** 
 
 ## Getting Started
 you can use this app from th URL 

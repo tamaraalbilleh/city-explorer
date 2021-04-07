@@ -10,6 +10,7 @@ const cors = require('cors');
 const superagent = require ('superagent');
 const pg = require('pg');
 
+
 // setup //
 const server = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ const client = new pg.Client( {
   }
 });
 
+
 // server is listening //
 client.connect().then (()=>{
   server.listen(PORT,()=>{
@@ -29,12 +31,14 @@ client.connect().then (()=>{
 });
 
 
-
 // routs //
 server.get ('/',homeRoutHandler);
 server.get ('/location',locationHandler);
 server.get ('/weather',weatherHandler);
 server.get ('/parks',parksHandler);
+server.get ('/movies',moviesHandler);
+server.get ('/yelp', yelpHandler);
+
 
 
 // rout handlers //
@@ -44,25 +48,7 @@ function homeRoutHandler (req,res){
   res.send('server is alive !');
 }
 
-// lab 07 //
-// location
-// https://city-expl0rer.herokuapp.com/location?city=amman // request url
-// function locationHandler (req,res){
-//   let cityName = req.query.city;
-//   // console.log (req.query);
-//   // let geoData = require ('./data/location.json');
-//   let key = process.env.GEOCODE_API_KEY;
-//   let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
-//   superagent.get(locationURL).then(geoData => {
-//     let gData = geoData.body;
-//     let newLocation = new Location(gData);
-//     res.send (newLocation);
-//   });
 
-// }
-
-
-// lab 08 //
 // locations
 // https://city-expl0rer.herokuapp.com/location?city=amman // request url
 function locationHandler (req,res){
@@ -77,7 +63,7 @@ function locationHandler (req,res){
     }
     function check (arr){ // created a function to check if the city name the user enters already exist in the array //
       for (let i =0;i<arr.length;i++){
-        if(arr[i].toLocaleLowerCase().includes(cityName.toLocaleLowerCase())){ // it it does exist this will return true //
+        if(arr[i].toLocaleLowerCase().includes(cityName.toLocaleLowerCase())){ // if it does exist this will return true //
           return true;
         }
       }
@@ -105,15 +91,19 @@ function locationHandler (req,res){
         return item.toLocaleLowerCase().includes(cityName.toLocaleLowerCase());
       });
 
-      console.log('safe',[safeValues[0]]);
+      // console.log('safe',[safeValues[0]]);
       client.query (SQL,[safeValues[0]]).then(result=>{
-        console.log ('q result rows',result.rows);
+        // console.log ('q result rows',result.rows);
         res.send (result.rows[0]);
       });
     }
 
-  });
+  })
+    .catch (error=>{
+      res.send(error);
+    });
 }
+
 
 // weather
 // https://city-expl0rer.herokuapp.com/weather?search_query=Lynnwood&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932&page=1
@@ -131,9 +121,11 @@ function weatherHandler (req,res){
     res.send (weatherArray);
 
 
-  });
+  })
+    .catch (error=>{
+      res.send(error);
+    });
 }
-
 
 
 // parks
@@ -154,12 +146,65 @@ function parksHandler (req , res){
     });
     // let data1 =pData.data.map (item => new Parks (item));
     res.send (responseArray);
-  });
+  })
+    .catch (error=>{
+      res.send(error);
+    });
 
 }
 
 
+// movies //
+// Request URL: https://city-expl0rer.herokuapp.com/movies?search_query=Seattle&formatted_query=Seattle%2C%20Seattle%2C%20Washington%2C%2098104%2C%20USA&latitude=47.60383210000000&longitude=-122.33006240000000&page=1
+function moviesHandler (req,res) {
+  let cityName = req.query.search_query;
+  // console.log (cityName);
+  let key = process.env.MOVIE_API_KEY;
+  let moviesURL = `https://api.themoviedb.org/3/discover/movie?api_key=${key}&query=${cityName}`;
+  superagent.get(moviesURL).then(movieData => {
+    let mData = movieData.body.results;
+    let targetData = mData.map (item=>{
+      return new Movies (item);
+    });
+    // console.log ('mdata',mData);
+    // let data1 =pData.data.map (item => new Parks (item));
+    res.send (targetData);
+  })
+    .catch (error=>{
+      res.send(error);
+    });
+
+}
+
+
+// yelp //
+// Request URL: http://localhost:3000/yelp?search_query=Seattle&formatted_query=Seattle%2C%20Seattle%2C%20Washington%2C%2098104%2C%20USA&latitude=47.60383210000000&longitude=-122.33006240000000&page=1
+function yelpHandler (req,res) {
+  let cityName = req.query.search_query;
+  let page = req.query.page;
+  let key = process.env.YELP_API_KEY;
+  let limit = 5;
+  let offset =  ((page - 1) * limit) + 1;
+  let yelpURL = `https://api.yelp.com/v3/businesses/search?term=restaurants&location=${cityName}&limit=${limit}&offset=${offset || 5}`;
+  superagent.get(yelpURL)
+    .set ('Authorization',`Bearer ${key}`)
+    .then (yelpData=>{
+      let yData = yelpData.body.businesses;
+      let targetData = yData.map (item=>{
+        return new Yelp(item);
+      });
+      res.send (targetData);
+    })
+
+    .catch (error=>{
+      res.send(error);
+    });
+}
+
+
+
 // constructors //
+
 // location
 function Location (geoData) {
   let search = geoData[0].display_name.split (',');
@@ -188,6 +233,29 @@ function Parks (parksData){
 }
 
 
+// movies
+function Movies (movieData){
+  this.title = movieData.original_title;
+  this.overview = movieData.overview;
+  this.average_votes = movieData.vote_average;
+  this.total_votes = movieData.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500${movieData.backdrop_path}`;
+  this.popularity = movieData.popularity;
+  this.released_on = movieData.release_date;
+}
+
+
+// yelp
+function Yelp (yelpData){
+  this.name = yelpData.name;
+  this.image_url = yelpData.image_url;
+  this.price = yelpData.price;
+  this.rating =yelpData.rating ;
+  this.url = yelpData.url;
+}
+
+
+
 // error
 function errorHandler (req,res){
   let errorObject = {
@@ -199,3 +267,19 @@ function errorHandler (req,res){
 server.get ('*',errorHandler);
 
 
+// lab 07 //
+// location
+// https://city-expl0rer.herokuapp.com/location?city=amman // request url
+// function locationHandler (req,res){
+//   let cityName = req.query.city;
+//   // console.log (req.query);
+//   // let geoData = require ('./data/location.json');
+//   let key = process.env.GEOCODE_API_KEY;
+//   let locationURL = `https://api.locationiq.com/v1/autocomplete.php?key=${key}&q=${cityName}`;
+//   superagent.get(locationURL).then(geoData => {
+//     let gData = geoData.body;
+//     let newLocation = new Location(gData);
+//     res.send (newLocation);
+//   });
+
+// }
